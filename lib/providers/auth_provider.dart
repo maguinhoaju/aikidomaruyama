@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 class AuthProvider with ChangeNotifier {
   String? message;
   String? token;
+  dynamic body;
 
   final _url = "https://identitytoolkit.googleapis.com";
   final _resource = "/v1/accounts";
@@ -24,7 +25,7 @@ class AuthProvider with ChangeNotifier {
 
     if (response.statusCode == 200) {
       message = "Usuário cadastrado com sucesso.";
-      var body = jsonDecode(response.body);
+      body = jsonDecode(response.body);
       token = body['idToken'];
       return true;
     } else {
@@ -45,12 +46,18 @@ class AuthProvider with ChangeNotifier {
 
     if (response.statusCode == 200) {
       message = "Usuário autenticado com sucesso.";
-      var body = jsonDecode(response.body);
+      body = jsonDecode(response.body);
       token = body['idToken'];
       return true;
     } else {
       message = 'Falha ao autenticar o Usuário.';
       return false;
     }
+  }
+
+  //Encerrar sessão do usuário
+  void logout() {
+    body = null;
+    token = null;
   }
 }

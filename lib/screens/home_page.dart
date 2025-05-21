@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:io';
+import 'package:aikidomaruyama/common/my_drawer.dart';
 import 'package:aikidomaruyama/models/practitioner_model.dart';
 //import 'package:aikidomaruyama/providers/authentication.dart';
 import 'package:flutter/material.dart';
@@ -144,55 +145,7 @@ class _HomePageState extends State<HomePage> {
             child: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text("Logout"),
-                onTap: () {
-                  //             _authenticationService.signOut();
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Home",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/homepage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Administração",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/adminpage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Perfil",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/profilepage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Cadastro",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/registerpage');
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: CustomDrawer(),
         body: Padding(
           padding: const EdgeInsets.all(22.0),
           child: Column(
