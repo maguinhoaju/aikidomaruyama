@@ -2,9 +2,10 @@ import 'package:aikidomaruyama/common/my_snackbar.dart';
 import 'package:aikidomaruyama/components/decoration.dart';
 import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:aikidomaruyama/routes.dart';
-//import 'package:aikidomaruyama/providers/authentication.dart';
+import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -19,8 +20,6 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  //final AuthenticationService _authenticationService = AuthenticationService();
 
   String _errorMessage = '';
 
@@ -99,12 +98,20 @@ class _LoginPageState extends State<LoginPage> {
       child: FilledButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            //  _authenticationService
-            //      .signIn(
-            //        email: _emailController.text,
-            //        password: _passwordController.text,
-            //      )
-            //      .then((uid) => {Navigator.pushNamed(context, '/homepage')});
+            String email = _emailController.text;
+            String password = _passwordController.text;
+
+            AuthProvider authProvider = Provider.of<AuthProvider>(
+              context,
+              listen: false,
+            );
+            authProvider.signIn(email, password).then((resposta) {
+              if (resposta) {
+                Navigator.pushNamed(context, Routes.HOME);
+              } else {
+                _errorMessage = 'Falha ao efetuar login.';
+              }
+            });
           }
         },
         style: getButtonStyle(),
@@ -116,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: FilledButton(
         onPressed: () {
-          Navigator.pushNamed(context, Routes.REGISTERNEW);
+          Navigator.pushNamed(context, Routes.REGISTER);
         },
         style: getButtonStyle(),
         child: const Text('Registrar', style: TextStyle(color: Colors.white)),
@@ -162,22 +169,5 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  void processError(final PlatformException error) {
-    if (error.code == "ERROR_USER_NOT_FOUND") {
-      setState(() {
-        _errorMessage = "Não foi possível encontrar o usuário.";
-      });
-    } else if (error.code == "ERROR_WRONG_PASSWORD") {
-      setState(() {
-        _errorMessage = "Senha incorreta.";
-      });
-    } else {
-      setState(() {
-        _errorMessage =
-            "Ops! Ocorreu um erro no log in. Tente novamente mais tarde.";
-      });
-    }
   }
 }

@@ -1,125 +1,59 @@
 import 'dart:io';
-import 'package:aikidomaruyama/screens/home_page.dart';
-//import 'package:aikidomaruyama/providers/authentication.dart';
+import 'package:aikidomaruyama/routes.dart';
+import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
-class RegisterPage extends StatefulWidget {
-  static String tag = 'home-page';
+class RegisterPage extends StatelessWidget {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
-  const RegisterPage({super.key});
+  RegisterPage({super.key});
 
-  @override
-  _RegisterPageState createState() => _RegisterPageState();
-}
-
-class _RegisterPageState extends State<RegisterPage> {
-  //  final AuthenticationService _authenticationService = AuthenticationService();
-
-  final _formKey = GlobalKey<FormState>();
-  final _nomeController = TextEditingController();
-  final _dataNascimentoController = TextEditingController();
-  final _dataInicioController = TextEditingController();
-  final _dataUltimoExameController = TextEditingController();
-
-  String _graduacaoSelecionada = 'BRANCA'; // Valor padrão
-  String? _fotoPath;
-
-  final List<String> _graduacoes = [
-    'BRANCA',
-    'AMARELA',
-    'ROXA',
-    'VERDE',
-    'AZUL',
-    'MARROM',
-    'SHODAN',
-    'NIDAN',
-    'SANDAN',
-    'YODAN',
-    'GODAN',
-    'ROKUDAN',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      final directory = await getApplicationDocumentsDirectory();
-      final path =
-          '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      await pickedFile.saveTo(path);
-
-      setState(() {
-        _fotoPath = path;
-      });
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('fotoPath', path);
+  bool _isValidEmail(String? email) {
+    if (email == null || email.isEmpty || !email.contains("@")) {
+      return false;
+    } else {
+      return true;
     }
   }
 
-  Future<void> _takePhoto() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile = await picker.pickImage(
-      source: ImageSource.camera,
-    );
-    if (pickedFile != null) {
-      final directory = await getApplicationDocumentsDirectory();
-      final path =
-          '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      await pickedFile.saveTo(path);
-
-      setState(() {
-        _fotoPath = path;
-      });
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('fotoPath', path);
+  bool _isValidPassword(String password, String confirmPassword) {
+    if (password == confirmPassword) {
+      return true;
+    } else {
+      return false;
     }
   }
 
-  Future<void> _loadData() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _nomeController.text = prefs.getString('nome') ?? '';
-      _dataNascimentoController.text = prefs.getString('dataNascimento') ?? '';
-      _dataInicioController.text = prefs.getString('dataInicio') ?? '';
-      _dataUltimoExameController.text =
-          prefs.getString('dataUltimoExame') ?? '';
-      _fotoPath = prefs.getString('fotoPath');
+  bool _isFormValid() {
+    return (_isValidEmail(_emailController.text) ||
+        _isValidPassword(
+          _passwordController.text,
+          _confirmPasswordController.text,
+        ));
+  }
 
-      // Carregar e definir a graduação, garantindo que seja um valor válido
-      final savedGraduacao = prefs.getString('graduacao');
-      if (savedGraduacao != null && _graduacoes.contains(savedGraduacao)) {
-        _graduacaoSelecionada = savedGraduacao;
+  void register(BuildContext context) {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    AuthProvider authProvider = Provider.of<AuthProvider>(
+      context,
+      listen: false,
+    );
+    authProvider.signUp(email, password).then((resposta) {
+      if (resposta) {
+        Navigator.pushNamed(context, Routes.HOME);
+      } else {
+        Navigator.pushNamed(context, Routes.LOGIN);
       }
     });
   }
 
-  Future<void> _saveData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('nome', _nomeController.text);
-    await prefs.setString('dataNascimento', _dataNascimentoController.text);
-    await prefs.setString('dataInicio', _dataInicioController.text);
-    await prefs.setString('dataUltimoExame', _dataUltimoExameController.text);
-    await prefs.setString('graduacao', _graduacaoSelecionada);
-    await prefs.setString('fotoPath', _fotoPath ?? '');
-  }
-
   @override
   Widget build(BuildContext context) {
-    //final node = FocusScope.of(context);
-
     return Center(
       child: Scaffold(
         appBar: AppBar(
@@ -130,193 +64,62 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ),
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text("Logout"),
-                onTap: () {
-                  //         _authenticationService.signOut();
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Home",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/homepage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Administração",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/adminpage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Perfil",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/profilepage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Cadastro",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/registerpage');
-                },
-              ),
-            ],
-          ),
-        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
-            key: _formKey,
             child: ListView(
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            ListTile(
-                              leading: const Icon(Icons.camera_alt),
-                              title: const Text('Tirar Foto'),
-                              onTap: () {
-                                Navigator.pop(context);
-                                _takePhoto();
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.image),
-                              title: const Text('Escolher Foto'),
-                              onTap: () {
-                                Navigator.pop(context);
-                                _pickImage();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage:
-                        _fotoPath != null ? FileImage(File(_fotoPath!)) : null,
-                    child:
-                        _fotoPath == null
-                            ? const Icon(Icons.camera_alt, size: 50)
-                            : null,
-                  ),
-                ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _nomeController,
-                  decoration: const InputDecoration(labelText: 'Nome Completo'),
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'E-mail'),
+                  keyboardType: TextInputType.text,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira seu nome completo';
+                    if (!_isValidEmail(value)) {
+                      return 'Por favor, insira um e-mail válido.';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _dataNascimentoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Data de Nascimento',
-                  ),
-                  keyboardType: TextInputType.datetime,
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Senha'),
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, insira sua data de nascimento';
+                      return 'Por favor, insira uma senha.';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _dataInicioController,
+                  controller: _confirmPasswordController,
                   decoration: const InputDecoration(
-                    labelText: 'Data de Início no Aikido',
+                    labelText: 'Conrimar senha',
                   ),
-                  keyboardType: TextInputType.datetime,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, insira a data de início no Aikido';
+                      return 'Por favor, confirme a senha.';
+                    }
+                    if (!_isValidPassword(value, _passwordController.text)) {
+                      return 'As senhas não podem ser diferentes.';
                     }
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _graduacaoSelecionada,
-                  decoration: const InputDecoration(
-                    labelText: 'Graduação Atual',
-                  ),
-                  items:
-                      _graduacoes.map((graduacao) {
-                        return DropdownMenuItem<String>(
-                          value: graduacao,
-                          child: Text(graduacao),
-                        );
-                      }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _graduacaoSelecionada =
-                          value ??
-                          'BRANCA'; // Definindo valor padrão caso seja nulo
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, selecione sua graduação';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _dataUltimoExameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Data do Último Exame',
-                  ),
-                  keyboardType: TextInputType.datetime,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor, insira a data do último exame';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      _saveData();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Cadastro realizado com sucesso!'),
-                        ),
-                      );
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
+                    if (_isFormValid()) {
+                      register(context);
+                    } else {
+                      const SnackBar(
+                        content: Text('Campos obrigatórios ou inválidos!'),
                       );
                     }
                   },
