@@ -1,4 +1,6 @@
+import 'package:aikidomaruyama/providers/activity_provider.dart';
 import 'package:aikidomaruyama/routes.dart';
+import 'package:aikidomaruyama/screens/activities_page.dart';
 import 'package:aikidomaruyama/screens/admin_page.dart';
 import 'package:aikidomaruyama/screens/home_page.dart';
 import 'package:aikidomaruyama/screens/login_page.dart';
@@ -23,6 +25,9 @@ class App extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<AuthProvider>(
           create: (context) => AuthProvider(),
+        ),
+        ChangeNotifierProvider<ActivityProvider>(
+          create: (context) => ActivityProvider(),
         ),
       ],
       child: MaterialApp(

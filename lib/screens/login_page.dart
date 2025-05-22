@@ -2,9 +2,7 @@ import 'package:aikidomaruyama/common/my_snackbar.dart';
 import 'package:aikidomaruyama/components/decoration.dart';
 import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:aikidomaruyama/routes.dart';
-import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {

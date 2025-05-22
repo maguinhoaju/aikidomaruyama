@@ -6,4 +6,5 @@ class Routes {
   static String PROFILE = "/profile";
   static String REQUIREMENTS = "/requirements";
   static String COMPLETEREGISTER = "/completeregister";
+  static String ACTIVITIES = "/activities";
 }

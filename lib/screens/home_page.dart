@@ -1,12 +1,14 @@
-import 'dart:collection';
 import 'dart:io';
-import 'package:aikidomaruyama/common/my_drawer.dart';
-import 'package:aikidomaruyama/models/practitioner_model.dart';
-//import 'package:aikidomaruyama/providers/authentication.dart';
+import 'package:aikidomaruyama/models/activity_model.dart';
+import 'package:aikidomaruyama/screens/activities_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../common/utils.dart';
+import 'package:aikidomaruyama/common/my_drawer.dart';
+import 'package:aikidomaruyama/models/practitioner_model.dart';
+//import 'package:aikidomaruyama/providers/auth_provider.dart';
+import 'package:aikidomaruyama/providers/activity_provider.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
@@ -18,8 +20,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //  final AuthenticationService _authenticationService = AuthenticationService();
-  final ValueNotifier<List<Event>> _selectedEvents = ValueNotifier([]);
+  final CalendarFormat _calendarFormat = CalendarFormat.month;
+  late DateTime _focusedDay;
+  late DateTime _selectedDay;
 
   String _nome = '';
   String _fotoPath = '';
@@ -38,7 +41,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _focusedDay = DateTime.now();
+    _selectedDay = _focusedDay;
   }
 
   Future<void> _loadData() async {
@@ -97,47 +101,166 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Using a `LinkedHashSet` is recommended due to equality comparison override
-  final Set<DateTime> _selectedDays = LinkedHashSet<DateTime>(
-    equals: isSameDay,
-    hashCode: getHashCode,
-  );
-
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
-
-  @override
-  void dispose() {
-    _selectedEvents.dispose();
-    super.dispose();
+  // Filtra atividades por dia
+  List<ActivityModel> _getActivitiesForDay(
+    Map<DateTime, List<ActivityModel>> map,
+    DateTime day,
+  ) {
+    final key = DateTime(day.year, day.month, day.day);
+    return map[key] ?? [];
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    return kEvents[day] ?? [];
-  }
-
-  List<Event> _getEventsForDays(Set<DateTime> days) {
-    // Implementation example
-    // Note that days are in selection order (same applies to events)
-    return [for (final d in days) ..._getEventsForDay(d)];
-  }
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _focusedDay = focusedDay;
-      // Update values in a Set
-      if (_selectedDays.contains(selectedDay)) {
-        _selectedDays.remove(selectedDay);
-      } else {
-        _selectedDays.add(selectedDay);
-      }
-    });
-
-    _selectedEvents.value = _getEventsForDays(_selectedDays);
+  // Verifica se há treinos no dia para marcar no calendário
+  bool _hasTrainingOnDay(Map<DateTime, List<ActivityModel>> map, DateTime day) {
+    final key = DateTime(day.year, day.month, day.day);
+    return map.containsKey(key);
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ActivityProvider>(context);
+    final trainingMap = provider.trainingByDate;
+
+    final avatar = CircleAvatar(
+      radius: 80,
+      backgroundImage: _fotoPath.isNotEmpty ? FileImage(File(_fotoPath)) : null,
+      child: _fotoPath.isEmpty ? const Icon(Icons.person, size: 50) : null,
+    );
+
+    final containerGraduacao = Container(
+      width: double.infinity,
+      height: 32,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: _getGraduacaoColor(_graduacao),
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Text(
+        _graduacao,
+        style: TextStyle(
+          color: _getTextGraduacaoColor(_graduacao),
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+      ),
+    );
+
+    final barraAtividades = Container(
+      alignment: Alignment.center,
+      height: 32,
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      decoration: BoxDecoration(
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: const Text(
+        "Registro de Atividades",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ),
+    );
+
+    final columnResumo = Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          _nome,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Total de Treinos: ${_practitionerModel.adultWorkouts} / ${_practitionerModel.adultWorkoutsRequirement}",
+          style: const TextStyle(fontSize: 14),
+        ),
+        Text(
+          "Seminários: ${_practitionerModel.seminars} / ${_practitionerModel.seminarsRequirement}",
+          style: const TextStyle(fontSize: 14),
+        ),
+        Text(
+          "Ukes: ${_practitionerModel.ukes} / ${_practitionerModel.ukesRequirement}",
+          style: const TextStyle(fontSize: 14),
+        ),
+      ],
+    );
+
+    final calendario = TableCalendar(
+      firstDay: DateTime(2020),
+      lastDay: DateTime(2030),
+      focusedDay: _focusedDay,
+      calendarFormat: _calendarFormat,
+      startingDayOfWeek: StartingDayOfWeek.sunday,
+      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+      onDaySelected: (selectedDay, focusedDay) {
+        setState(() {
+          _selectedDay = selectedDay;
+          _focusedDay = focusedDay;
+        });
+        final activities = _getActivitiesForDay(trainingMap, selectedDay);
+        Navigator.push(
+          context,
+          //MaterialPageRoute(builder: (_) => ActivitiesPage(date: selectedDay)),
+          MaterialPageRoute(builder: (_) => ActivitiesPage(date: selectedDay)),
+        );
+      },
+      onPageChanged: (focusedDay) {
+        setState(() {
+          _focusedDay = focusedDay;
+        });
+      },
+      calendarBuilders: CalendarBuilders(
+        defaultBuilder: (context, day, focusedDay) {
+          final hasTraining = _hasTrainingOnDay(trainingMap, day);
+          return Container(
+            margin: const EdgeInsets.all(6.0),
+            decoration: BoxDecoration(
+              color: hasTraining ? Colors.redAccent : null,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '${day.day}',
+              style: TextStyle(color: hasTraining ? Colors.white : null),
+            ),
+          );
+        },
+        todayBuilder: (context, day, focusedDay) {
+          return Container(
+            margin: const EdgeInsets.all(6.0),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '${day.day}',
+              style: const TextStyle(color: Colors.white),
+            ),
+          );
+        },
+        selectedBuilder: (context, day, focusedDay) {
+          final hasTraining = _hasTrainingOnDay(trainingMap, day);
+          return Container(
+            margin: const EdgeInsets.all(6.0),
+            decoration: BoxDecoration(
+              color: hasTraining ? Colors.red : Colors.grey,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '${day.day}',
+              style: const TextStyle(color: Colors.white),
+            ),
+          );
+        },
+      ),
+      calendarStyle: const CalendarStyle(outsideDaysVisible: false),
+      headerStyle: const HeaderStyle(
+        formatButtonVisible: false,
+        titleCentered: true,
+      ),
+    );
+
+    //montagem da tela
     return Center(
       child: Scaffold(
         appBar: AppBar(
@@ -153,138 +276,14 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 80,
-                    backgroundImage:
-                        _fotoPath.isNotEmpty
-                            ? FileImage(File(_fotoPath))
-                            : null,
-                    child:
-                        _fotoPath.isEmpty
-                            ? const Icon(Icons.person, size: 50)
-                            : null,
-                  ),
-                  const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        _nome,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "Treinos de Adultos: ${_practitionerModel.adultWorkouts} / ${_practitionerModel.adultWorkoutsRequirement}",
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        "Seminários: ${_practitionerModel.seminars} / ${_practitionerModel.seminarsRequirement}",
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        "Ukes: ${_practitionerModel.ukes} / ${_practitionerModel.ukesRequirement}",
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ],
+                children: [avatar, const SizedBox(height: 16), columnResumo],
               ),
               const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                height: 32,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: _getGraduacaoColor(_graduacao),
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: Text(
-                  _graduacao,
-                  style: TextStyle(
-                    color: _getTextGraduacaoColor(_graduacao),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              Container(
-                alignment: Alignment.center,
-                height: 32,
-                margin: const EdgeInsets.symmetric(vertical: 4.0),
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: const Text(
-                  "Registro de Atividades",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                ),
-              ),
-              TableCalendar<Event>(
-                firstDay: kFirstDay,
-                lastDay: kLastDay,
-                focusedDay: _focusedDay,
-                calendarFormat: _calendarFormat,
-                eventLoader: _getEventsForDay,
-                startingDayOfWeek: StartingDayOfWeek.sunday,
-                selectedDayPredicate: (day) {
-                  // Use values from Set to mark multiple days as selected
-                  return _selectedDays.contains(day);
-                },
-                onDaySelected: _onDaySelected,
-                onFormatChanged: (format) {
-                  if (_calendarFormat != format) {
-                    setState(() {
-                      _calendarFormat = format;
-                    });
-                  }
-                },
-                onPageChanged: (focusedDay) {
-                  _focusedDay = focusedDay;
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Clear selection'),
-                onPressed: () {
-                  setState(() {
-                    _selectedDays.clear();
-                    _selectedEvents.value = [];
-                  });
-                },
-              ),
-              const SizedBox(height: 8.0),
-              Expanded(
-                child: ValueListenableBuilder<List<Event>>(
-                  valueListenable: _selectedEvents,
-                  builder: (context, value, _) {
-                    return ListView.builder(
-                      itemCount: value.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                            vertical: 4.0,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: ListTile(
-                            onTap: () => print('${value[index]}'),
-                            title: Text('${value[index]}'),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
+              containerGraduacao,
+              const SizedBox(height: 16),
+              barraAtividades,
+              const SizedBox(height: 2),
+              calendario,
             ],
           ),
         ),
