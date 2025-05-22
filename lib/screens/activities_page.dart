@@ -51,8 +51,20 @@ class ActivitiesPage extends StatelessWidget {
                       title: Text(
                         'Tipo de treino: ${activity.tipoTreino.descricao}',
                       ),
-                      subtitle: Text(
-                        'Turno: ${activity.periodoDoDia.descricao}',
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Turno: ${activity.periodoDoDia.descricao}'),
+                          if (activity.latitude != null &&
+                              activity.longitude != null)
+                            Text(
+                              'Localização: ${activity.latitude!.toStringAsFixed(4)}, ${activity.longitude!.toStringAsFixed(4)}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,

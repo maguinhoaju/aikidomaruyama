@@ -101,7 +101,7 @@ final List<ActivityModel> mockActivities = [
     tipoTreino: TipoTreino.graduado,
   ),
 
-  // Maio (mês atual)
+  // Maio
   ActivityModel(
     date: DateTime(2025, 5, 6),
     periodoDoDia: PeriodoDoDia.tarde,
@@ -121,6 +121,21 @@ final List<ActivityModel> mockActivities = [
     date: DateTime(2025, 5, 15),
     periodoDoDia: PeriodoDoDia.tarde,
     tipoTreino: TipoTreino.graduado,
+  ),
+  ActivityModel(
+    date: DateTime(2025, 5, 15),
+    periodoDoDia: PeriodoDoDia.noite,
+    tipoTreino: TipoTreino.normal,
+  ),
+  ActivityModel(
+    date: DateTime(2025, 5, 17),
+    periodoDoDia: PeriodoDoDia.manha,
+    tipoTreino: TipoTreino.normal,
+  ),
+  ActivityModel(
+    date: DateTime(2025, 5, 17),
+    periodoDoDia: PeriodoDoDia.noite,
+    tipoTreino: TipoTreino.normal,
   ),
   ActivityModel(
     date: DateTime(2025, 5, 17),
