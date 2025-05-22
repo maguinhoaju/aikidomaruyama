@@ -1,8 +1,7 @@
+import 'package:aikidomaruyama/common/my_drawer.dart';
 import 'package:aikidomaruyama/common/my_snackbar.dart';
 import 'package:aikidomaruyama/components/decoration.dart';
-import 'package:aikidomaruyama/screens/admin_page.dart';
 //import 'package:aikidomaruyama/providers/authentication.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -122,55 +121,7 @@ class _RequirementsPageState extends State<RequirementsPage> {
             ),
           ),
         ),
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text("Logout"),
-                onTap: () {
-                  //        _authenticationService.signOut();
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Home",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/homepage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Administração",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/adminpage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Perfil",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/profilepage');
-                },
-              ),
-              ListTile(
-                title: const Text(
-                  "Cadastro",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/registerpage');
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: CustomDrawer(),
         body: Expanded(
           child: ListView.builder(
             itemBuilder: (context, index) {

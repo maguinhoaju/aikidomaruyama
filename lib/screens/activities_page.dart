@@ -1,7 +1,6 @@
 import 'package:aikidomaruyama/screens/activity_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/activity_model.dart';
 import 'package:aikidomaruyama/providers/activity_provider.dart';
 
 class ActivitiesPage extends StatelessWidget {

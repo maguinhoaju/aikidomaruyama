@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _focusedDay = DateTime.now();
     _selectedDay = _focusedDay;
+    _loadData();
   }
 
   Future<void> _loadData() async {
