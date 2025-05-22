@@ -126,20 +126,28 @@ final List<ActivityModel> mockActivities = [
     date: DateTime(2025, 5, 15),
     periodoDoDia: PeriodoDoDia.noite,
     tipoTreino: TipoTreino.normal,
+    latitude: 37.4219980,
+    longitude: -122.0841,
   ),
   ActivityModel(
     date: DateTime(2025, 5, 17),
     periodoDoDia: PeriodoDoDia.manha,
     tipoTreino: TipoTreino.normal,
+    latitude: 37.4219981,
+    longitude: -122.082,
   ),
   ActivityModel(
     date: DateTime(2025, 5, 17),
     periodoDoDia: PeriodoDoDia.noite,
     tipoTreino: TipoTreino.normal,
+    latitude: 37.4219991,
+    longitude: -122.0861,
   ),
   ActivityModel(
     date: DateTime(2025, 5, 17),
     periodoDoDia: PeriodoDoDia.noite,
     tipoTreino: TipoTreino.yudansha,
+    latitude: 37.4219983,
+    longitude: -122.084,
   ),
 ];
