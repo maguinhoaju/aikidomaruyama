@@ -196,10 +196,8 @@ class _HomePageState extends State<HomePage> {
           _selectedDay = selectedDay;
           _focusedDay = focusedDay;
         });
-        final activities = _getActivitiesForDay(trainingMap, selectedDay);
         Navigator.push(
           context,
-          //MaterialPageRoute(builder: (_) => ActivitiesPage(date: selectedDay)),
           MaterialPageRoute(builder: (_) => ActivitiesPage(date: selectedDay)),
         );
       },
