@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "750703215477",
+    "project_id": "aikidomaruyama-28bc6",
+    "storage_bucket": "aikidomaruyama-28bc6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750703215477:android:dccbe8acc3ae14a7b3093c",
+        "android_client_info": {
+          "package_name": "br.com.maguinhoaju.aikidomaruyama"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbGiPoOjXBnLwtvbfF6HoA9qJB6sPRjSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
