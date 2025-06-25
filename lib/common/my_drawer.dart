@@ -1,4 +1,5 @@
 import 'package:aikidomaruyama/routes.dart';
+import 'package:aikidomaruyama_auth/aikidomaruyama_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,7 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of<AuthProvider>(
+    AikidoMaruyamaAuth authProvider = Provider.of<AikidoMaruyamaAuth>(
       context,
       listen: false,
     );

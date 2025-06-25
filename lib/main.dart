@@ -8,6 +8,7 @@ import 'package:aikidomaruyama/screens/register_page.dart';
 import 'package:aikidomaruyama/screens/complete_register_page.dart';
 import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:aikidomaruyama/screens/requirements_page.dart';
+import 'package:aikidomaruyama_auth/aikidomaruyama_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,8 +27,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(
-          create: (context) => AuthProvider(),
+        ChangeNotifierProvider<AikidoMaruyamaAuth>(
+          create: (context) => AikidoMaruyamaAuth(),
         ),
         ChangeNotifierProvider<ActivityProvider>(
           create: (context) => ActivityProvider(),

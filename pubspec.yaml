@@ -23,6 +23,10 @@ dependencies:
   geolocator: ^14.0.0
   geocoding: ^3.0.0
   firebase_core: ^3.14.0
+  aikidomaruyama_auth:
+    git:
+      url: https://github.com/maguinhoaju/aikidomaruyama_auth.git
+      ref: main
 
 dev_dependencies:
   flutter_test:

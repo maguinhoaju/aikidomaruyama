@@ -2,6 +2,7 @@ import 'package:aikidomaruyama/common/my_snackbar.dart';
 import 'package:aikidomaruyama/components/decoration.dart';
 import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:aikidomaruyama/routes.dart';
+import 'package:aikidomaruyama_auth/aikidomaruyama_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -99,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
             String email = _emailController.text;
             String password = _passwordController.text;
 
-            AuthProvider authProvider = Provider.of<AuthProvider>(
+            AikidoMaruyamaAuth authProvider = Provider.of<AikidoMaruyamaAuth>(
               context,
               listen: false,
             );
