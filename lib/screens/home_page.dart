@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:aikidomaruyama/models/activity_model.dart';
 import 'package:aikidomaruyama/screens/activities_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -103,8 +104,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Filtra atividades por dia
-  List<ActivityModel> _getActivitiesForDay(
-    Map<DateTime, List<ActivityModel>> map,
+  List<Activity> _getActivitiesForDay(
+    Map<DateTime, List<Activity>> map,
     DateTime day,
   ) {
     final key = DateTime(day.year, day.month, day.day);
@@ -112,15 +113,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Verifica se há treinos no dia para marcar no calendário
-  bool _hasTrainingOnDay(Map<DateTime, List<ActivityModel>> map, DateTime day) {
+  bool _hasTrainingOnDay(Map<DateTime, List<Activity>> map, DateTime day) {
     final key = DateTime(day.year, day.month, day.day);
     return map.containsKey(key);
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ActivityProvider>(context);
-    final trainingMap = provider.trainingByDate;
+    final activityProvider = Provider.of<ActivityProvider>(context);
+    activityProvider.getAll();
+    final trainingMap = activityProvider.trainingByDate;
 
     final avatar = CircleAvatar(
       radius: 80,

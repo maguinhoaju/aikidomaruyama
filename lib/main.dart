@@ -8,6 +8,7 @@ import 'package:aikidomaruyama/screens/register_page.dart';
 import 'package:aikidomaruyama/screens/complete_register_page.dart';
 import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:aikidomaruyama/screens/requirements_page.dart';
+import 'package:aikidomaruyama/services/activity_service.dart';
 import 'package:aikidomaruyama_auth/aikidomaruyama_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,7 @@ class App extends StatelessWidget {
           create: (context) => AikidoMaruyamaAuth(),
         ),
         ChangeNotifierProvider<ActivityProvider>(
-          create: (context) => ActivityProvider(),
+          create: (context) => ActivityProvider(ActivityService()),
         ),
       ],
       child: MaterialApp(

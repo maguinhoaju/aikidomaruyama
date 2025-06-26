@@ -1,7 +1,9 @@
 import 'package:aikidomaruyama/enums/periodo_dia.dart';
 import 'package:aikidomaruyama/enums/tipo_treino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ActivityModel {
+class Activity {
+  String id;
   DateTime date;
   PeriodoDoDia periodoDoDia;
   TipoTreino tipoTreino;
@@ -9,7 +11,8 @@ class ActivityModel {
   double? longitude;
 
   // Construtor
-  ActivityModel({
+  Activity({
+    required this.id,
     required this.date,
     required this.periodoDoDia,
     required this.tipoTreino,
@@ -18,8 +21,8 @@ class ActivityModel {
   });
 
   // fromMap
-  ActivityModel.toMap(Map<String, dynamic> map)
-    : date = map["date"],
+  Activity.fromMap(Map<String, dynamic> map, this.id)
+    : date = (map["date"] as Timestamp).toDate().toLocal(),
       periodoDoDia = map["periodoDoDia"],
       tipoTreino = map["tipoTreino"],
       latitude = map["latitude"],
@@ -28,9 +31,10 @@ class ActivityModel {
   // toMap
   Map<String, dynamic> toMap() {
     return {
+      "id": id,
       "date": date,
-      "periodoDoDia": periodoDoDia,
-      "tipoTreino": tipoTreino,
+      "periodoDoDia": periodoDoDia.descricao,
+      "tipoTreino": tipoTreino.descricao,
       "latitude": latitude,
       "longitude": longitude,
     };

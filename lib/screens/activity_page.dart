@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -5,10 +6,11 @@ import '../models/activity_model.dart';
 import '../enums/periodo_dia.dart';
 import '../enums/tipo_treino.dart';
 import 'package:aikidomaruyama/providers/activity_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class ActivityPage extends StatefulWidget {
   final DateTime date;
-  final ActivityModel? existingActivity;
+  final Activity? existingActivity;
 
   const ActivityPage({required this.date, this.existingActivity});
 
@@ -78,7 +80,8 @@ class _ActivityPageState extends State<ActivityPage> {
 
   void _salvar(ActivityProvider provider, double? lat, double? long) {
     if (selectedPeriodo != null && selectedTipo != null) {
-      final novaAtividade = ActivityModel(
+      final novaAtividade = Activity(
+        id: Uuid().v4(),
         date: widget.date,
         periodoDoDia: selectedPeriodo!,
         tipoTreino: selectedTipo!,
@@ -88,9 +91,9 @@ class _ActivityPageState extends State<ActivityPage> {
 
       // Aqui você pode usar o Provider para salvar ou atualizar
       if (widget.existingActivity == null) {
-        provider.addActivity(novaAtividade);
+        provider.add(novaAtividade);
       } else {
-        provider.editActivity(widget.existingActivity!, novaAtividade);
+        provider.update(novaAtividade);
       }
       Navigator.pop(context);
       ScaffoldMessenger.of(
