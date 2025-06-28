@@ -121,18 +121,38 @@ class _HomePageState extends State<HomePage> {
     return map.containsKey(key);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final activityProvider = Provider.of<ActivityProvider>(context);
-    final trainingMap = activityProvider.trainingByDate;
-
-    final avatar = CircleAvatar(
+  Widget _buildAvatar() {
+    return CircleAvatar(
       radius: 80,
       backgroundImage: _fotoPath.isNotEmpty ? FileImage(File(_fotoPath)) : null,
       child: _fotoPath.isEmpty ? const Icon(Icons.person, size: 50) : null,
     );
+  }
 
-    final containerGraduacao = Container(
+  Widget _buildResumo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _nome,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Total de Treinos: ${_practitionerModel.adultWorkouts} / ${_practitionerModel.adultWorkoutsRequirement}",
+        ),
+        Text(
+          "Seminários: ${_practitionerModel.seminars} / ${_practitionerModel.seminarsRequirement}",
+        ),
+        Text(
+          "Ukes: ${_practitionerModel.ukes} / ${_practitionerModel.ukesRequirement}",
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGraduacaoBox() {
+    return Container(
       width: double.infinity,
       height: 32,
       alignment: Alignment.center,
@@ -150,8 +170,10 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
 
-    final barraAtividades = Container(
+  Widget _buildBarraAtividades() {
+    return Container(
       alignment: Alignment.center,
       height: 32,
       margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -164,31 +186,10 @@ class _HomePageState extends State<HomePage> {
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ),
     );
+  }
 
-    final columnResumo = Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          _nome,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          "Total de Treinos: ${_practitionerModel.adultWorkouts} / ${_practitionerModel.adultWorkoutsRequirement}",
-          style: const TextStyle(fontSize: 14),
-        ),
-        Text(
-          "Seminários: ${_practitionerModel.seminars} / ${_practitionerModel.seminarsRequirement}",
-          style: const TextStyle(fontSize: 14),
-        ),
-        Text(
-          "Ukes: ${_practitionerModel.ukes} / ${_practitionerModel.ukesRequirement}",
-          style: const TextStyle(fontSize: 14),
-        ),
-      ],
-    );
-
-    final calendario = TableCalendar(
+  Widget _buildCalendario(Map<DateTime, List<Activity>> trainingMap) {
+    return TableCalendar(
       firstDay: DateTime(2020),
       lastDay: DateTime(2030),
       focusedDay: _focusedDay,
@@ -213,52 +214,15 @@ class _HomePageState extends State<HomePage> {
       calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, day, focusedDay) {
           final hasTraining = _hasTrainingOnDay(trainingMap, day);
-          return Container(
-            margin: const EdgeInsets.all(6.0),
-            decoration: BoxDecoration(
-              color: hasTraining ? Colors.redAccent : null,
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              '${day.day}',
-              style: TextStyle(color: hasTraining ? Colors.white : null),
-            ),
-          );
+          return _calendarDay(day, hasTraining ? Colors.redAccent : null);
         },
         todayBuilder: (context, day, focusedDay) {
-          return Container(
-            margin: const EdgeInsets.all(6.0),
-            decoration: BoxDecoration(
-              color:
-                  _hasTrainingOnDay(trainingMap, day)
-                      ? Colors.red
-                      : Colors.blue,
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              '${day.day}',
-              style: const TextStyle(color: Colors.white),
-            ),
-          );
+          final hasTraining = _hasTrainingOnDay(trainingMap, day);
+          return _calendarDay(day, hasTraining ? Colors.red : Colors.blue);
         },
         selectedBuilder: (context, day, focusedDay) {
-          return Container(
-            margin: const EdgeInsets.all(6.0),
-            decoration: BoxDecoration(
-              color:
-                  _hasTrainingOnDay(trainingMap, day)
-                      ? Colors.red
-                      : Colors.grey,
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              '${day.day}',
-              style: const TextStyle(color: Colors.white),
-            ),
-          );
+          final hasTraining = _hasTrainingOnDay(trainingMap, day);
+          return _calendarDay(day, hasTraining ? Colors.red : Colors.grey);
         },
       ),
       calendarStyle: const CalendarStyle(outsideDaysVisible: false),
@@ -267,36 +231,61 @@ class _HomePageState extends State<HomePage> {
         titleCentered: true,
       ),
     );
+  }
 
-    //montagem da tela
-    return Center(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Center(
-            child: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
+  Widget _calendarDay(DateTime day, Color? color) {
+    return Container(
+      margin: const EdgeInsets.all(6.0),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      alignment: Alignment.center,
+      child: Text(
+        '${day.day}',
+        style: TextStyle(color: color != null ? Colors.white : null),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final activityProvider = Provider.of<ActivityProvider>(context);
+    final trainingMap = activityProvider.trainingByDate;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text("Home", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
-        drawer: CustomDrawer(),
-        body: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [avatar, const SizedBox(height: 16), columnResumo],
-              ),
-              const SizedBox(height: 16),
-              FraseWidget(),
-              const SizedBox(height: 16),
-              containerGraduacao,
-              const SizedBox(height: 16),
-              barraAtividades,
-              const SizedBox(height: 2),
-              calendario,
-            ],
-          ),
-        ),
+      ),
+      drawer: CustomDrawer(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 600;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildAvatar(),
+                    const SizedBox(width: 24),
+                    Expanded(child: _buildResumo()),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const FraseWidget(),
+                const SizedBox(height: 24),
+                _buildGraduacaoBox(),
+                const SizedBox(height: 16),
+                _buildBarraAtividades(),
+                const SizedBox(height: 8),
+                _buildCalendario(trainingMap),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
