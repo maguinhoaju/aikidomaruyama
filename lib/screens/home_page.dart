@@ -8,8 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:aikidomaruyama/common/my_drawer.dart';
 import 'package:aikidomaruyama/models/practitioner_model.dart';
-//import 'package:aikidomaruyama/providers/auth_provider.dart';
 import 'package:aikidomaruyama/providers/activity_provider.dart';
+import '../common/frase_widget.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
@@ -278,7 +278,7 @@ class _HomePageState extends State<HomePage> {
         ),
         drawer: CustomDrawer(),
         body: Padding(
-          padding: const EdgeInsets.all(22.0),
+          padding: const EdgeInsets.all(18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -286,6 +286,8 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [avatar, const SizedBox(height: 16), columnResumo],
               ),
+              const SizedBox(height: 16),
+              FraseWidget(),
               const SizedBox(height: 16),
               containerGraduacao,
               const SizedBox(height: 16),

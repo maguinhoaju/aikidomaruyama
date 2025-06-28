@@ -22,7 +22,7 @@ class Activity {
 
   // fromMap
   Activity.fromMap(Map<String, dynamic> map, this.id)
-    : date = (map["date"] as Timestamp).toDate().toLocal(),
+    : date = DateTime.parse(map["date"]),
       periodoDoDia = PeriodoDoDia.fromDescricao(map["periodoDoDia"]),
       tipoTreino = TipoTreino.fromDescricao(map["tipoTreino"]),
       latitude = map["latitude"],

@@ -1,1 +1,44 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"aikidomaruyama-28bc6","appId":"1:750703215477:android:dccbe8acc3ae14a7b3093c","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"aikidomaruyama-28bc6","appId":"1:750703215477:ios:7291e81c85e2c868b3093c","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"aikidomaruyama-28bc6","configurations":{"android":"1:750703215477:android:dccbe8acc3ae14a7b3093c","ios":"1:750703215477:ios:7291e81c85e2c868b3093c","web":"1:750703215477:web:7f5132c37012489ab3093c"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "aikidomaruyama-28bc6",
+          "appId": "1:750703215477:android:dccbe8acc3ae14a7b3093c",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "aikidomaruyama-28bc6",
+          "appId": "1:750703215477:ios:7291e81c85e2c868b3093c",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "aikidomaruyama-28bc6",
+          "configurations": {
+            "android": "1:750703215477:android:dccbe8acc3ae14a7b3093c",
+            "ios": "1:750703215477:ios:7291e81c85e2c868b3093c",
+            "web": "1:750703215477:web:7f5132c37012489ab3093c"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}
