@@ -13,7 +13,8 @@ class FraseWidget extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('Erro: ${snapshot.error}');
+          print('Erro ao carregar a frase: ${snapshot.error}');
+          return Text('');
         } else if (snapshot.hasData) {
           final quote = snapshot.data!;
           return Column(

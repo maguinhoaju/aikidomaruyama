@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/frase_model.dart';
 
-// Tradução com a API pública do Google Translate (não-oficial)
+/// Tradução com a API pública do Google Translate (não-oficial)
 Future<String> traduzirTextoGoogle(String textoIngles) async {
   final uri = Uri.parse(
     'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${Uri.encodeComponent(textoIngles)}',
@@ -18,19 +18,17 @@ Future<String> traduzirTextoGoogle(String textoIngles) async {
   }
 }
 
-// Busca uma citação em inglês e traduz para português
-Future<Frase> fetchTranslatedQuote() async {
+/// Função real que busca e traduz uma citação
+Future<Frase> _fetchTranslatedQuoteReal() async {
   // Buscar frase em inglês da ZenQuotes
   final zenResponse = await http.get(
     Uri.parse('https://zenquotes.io/api/random'),
   );
 
-  print(
-    'Erro ao buscar frase da ZenQuotes: ${zenResponse.statusCode} - ${zenResponse.body}',
-  );
-
   if (zenResponse.statusCode != 200) {
-    throw Exception('Erro ao buscar frase da ZenQuotes');
+    throw Exception(
+      'Erro ao buscar frase da ZenQuotes: ${zenResponse.statusCode} - ${zenResponse.body}',
+    );
   }
 
   final zenJson = json.decode(zenResponse.body);
@@ -46,3 +44,6 @@ Future<Frase> fetchTranslatedQuote() async {
     author: author,
   );
 }
+
+/// Ponteiro que pode ser sobrescrito nos testes
+Future<Frase> Function() fetchTranslatedQuote = _fetchTranslatedQuoteReal;
