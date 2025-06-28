@@ -23,8 +23,8 @@ class Activity {
   // fromMap
   Activity.fromMap(Map<String, dynamic> map, this.id)
     : date = (map["date"] as Timestamp).toDate().toLocal(),
-      periodoDoDia = map["periodoDoDia"],
-      tipoTreino = map["tipoTreino"],
+      periodoDoDia = PeriodoDoDia.fromDescricao(map["periodoDoDia"]),
+      tipoTreino = TipoTreino.fromDescricao(map["tipoTreino"]),
       latitude = map["latitude"],
       longitude = map["longitude"];
 
@@ -32,7 +32,7 @@ class Activity {
   Map<String, dynamic> toMap() {
     return {
       "id": id,
-      "date": date,
+      "date": date.toIso8601String(),
       "periodoDoDia": periodoDoDia.descricao,
       "tipoTreino": tipoTreino.descricao,
       "latitude": latitude,

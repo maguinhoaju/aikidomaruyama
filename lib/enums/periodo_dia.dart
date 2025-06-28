@@ -13,4 +13,11 @@ enum PeriodoDoDia {
         return 'Noite';
     }
   }
+
+  static PeriodoDoDia fromDescricao(String descricao) {
+    return PeriodoDoDia.values.firstWhere(
+      (periodo) => periodo.descricao.toLowerCase() == descricao.toLowerCase(),
+      orElse: () => PeriodoDoDia.tarde,
+    );
+  }
 }

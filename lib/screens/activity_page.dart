@@ -82,7 +82,7 @@ class _ActivityPageState extends State<ActivityPage> {
     if (selectedPeriodo != null && selectedTipo != null) {
       final novaAtividade = Activity(
         id: Uuid().v4(),
-        date: widget.date,
+        date: widget.date.toUtc(),
         periodoDoDia: selectedPeriodo!,
         tipoTreino: selectedTipo!,
         latitude: lat,

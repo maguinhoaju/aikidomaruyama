@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
         return null;
       },
       keyboardType: TextInputType.emailAddress,
-      autofocus: false,
+      autofocus: true,
       controller: _emailController,
       decoration: getHintTextInputDecoration("E-mail"),
       textInputAction: TextInputAction.next,

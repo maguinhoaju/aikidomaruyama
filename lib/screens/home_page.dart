@@ -45,6 +45,9 @@ class _HomePageState extends State<HomePage> {
     _focusedDay = DateTime.now();
     _selectedDay = _focusedDay;
     _loadData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ActivityProvider>().getAll();
+    });
   }
 
   Future<void> _loadData() async {
@@ -121,7 +124,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final activityProvider = Provider.of<ActivityProvider>(context);
-    activityProvider.getAll();
     final trainingMap = activityProvider.trainingByDate;
 
     final avatar = CircleAvatar(
@@ -228,7 +230,10 @@ class _HomePageState extends State<HomePage> {
           return Container(
             margin: const EdgeInsets.all(6.0),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color:
+                  _hasTrainingOnDay(trainingMap, day)
+                      ? Colors.red
+                      : Colors.blue,
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
@@ -239,11 +244,13 @@ class _HomePageState extends State<HomePage> {
           );
         },
         selectedBuilder: (context, day, focusedDay) {
-          final hasTraining = _hasTrainingOnDay(trainingMap, day);
           return Container(
             margin: const EdgeInsets.all(6.0),
             decoration: BoxDecoration(
-              color: hasTraining ? Colors.red : Colors.grey,
+              color:
+                  _hasTrainingOnDay(trainingMap, day)
+                      ? Colors.red
+                      : Colors.grey,
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,

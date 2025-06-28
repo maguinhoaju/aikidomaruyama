@@ -16,4 +16,11 @@ enum TipoTreino {
         return 'Yudansha';
     }
   }
+
+  static TipoTreino fromDescricao(String descricao) {
+    return TipoTreino.values.firstWhere(
+      (tipo) => tipo.descricao.toLowerCase() == descricao.toLowerCase(),
+      orElse: () => TipoTreino.normal,
+    );
+  }
 }

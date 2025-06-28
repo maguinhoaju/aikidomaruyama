@@ -35,20 +35,18 @@ class ActivityProvider extends ChangeNotifier {
 
   // Método para adicionar uma atividade
   Future<void> add(Activity activity) async {
-    //_initIsLoading();
-    _isLoading = true;
+    _initIsLoading();
+    //_isLoading = true;
     try {
-      String? id = await _activityService.add(activity);
-      if (id != null) {
-        activity.id = id;
-        _activities.add(activity);
-        _errorMessage = null;
-      }
+      String id = await _activityService.add(activity);
+      activity.id = id;
+      _activities.add(activity);
+      _errorMessage = null;
     } catch (e) {
       _errorMessage = 'Erro ao adicionar atividade: $e';
     } finally {
-      //_initIsLoading(false);
-      _isLoading = false;
+      _initIsLoading(false);
+      //_isLoading = false;
     }
   }
 
@@ -141,6 +139,6 @@ class ActivityProvider extends ChangeNotifier {
 
   void _initIsLoading([value = true]) {
     _isLoading = value;
-    //notifyListeners();
+    notifyListeners();
   }
 }
